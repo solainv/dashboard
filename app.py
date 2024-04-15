@@ -62,11 +62,11 @@ app.layout = html.Div(className='main-container', children=[
             html.Label("Filtern nach Datum:", style={'font-size': '1.2em', 'color':'#ff0', 'font-family':'sans-serif'}),
             dcc.DatePickerRange(
                 id='input-date-range',
-                min_date_allowed=default_start_date,
-                max_date_allowed=default_end_date,
-                initial_visible_month=default_end_date,
-                start_date=default_start_date,
-                end_date=default_end_date,
+                min_date_allowed = default_start_date,
+                max_date_allowed = default_end_date,
+                # initial_visible_month = default_start_date,  # Setzt den sichtbaren Monat und das Jahr auf das Startdatum
+                start_date = default_start_date,
+                end_date = default_end_date,
                 display_format='DD.MM.YYYY'  # Europäisches Datumsformat
             ),
             html.Label("Fluggesellschaften auswählen:", style={'font-size': '1.2em', 'color':'#ff0', 'font-family':'sans-serif'}),
@@ -162,6 +162,7 @@ style={'display': 'flex', 'flex-direction': 'column', 'min-height': '100vh', 'ma
      Input('input-date-range', 'end_date'),
      Input('airline-dropdown', 'value')]
 )
+
 def update_plots(start_date, end_date, selected_airlines):
     try:
         if start_date is None or end_date is None:
@@ -255,4 +256,3 @@ def update_plots(start_date, end_date, selected_airlines):
 # Run the application
 if __name__ == '__main__':
     app.run_server(debug=True)
-
