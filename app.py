@@ -1,4 +1,4 @@
-    # Import erforderlicher Bibliotheken
+# Import erforderlicher Bibliotheken
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
@@ -193,16 +193,8 @@ def update_plots(start_date, end_date, selected_airlines):
         # Bestimmung des Trends (Aufwärts-, Abwärts- oder Stagnation)
         trend_symbol = '🔺' if sum_arr_delay > 0 else ('🔻' if sum_arr_delay < 0 else '')
 
-
-
         # KPI Gesamtverzug
         arr_delay_kpi = f'{sum_arr_delay} {trend_symbol}'
-
-        # Bestimmung des Trends (Aufwärts-, Abwärts- oder Stagnation)
-        trend_symbol = '⇧' if sum_arr_delay > 0 else ('⇩' if sum_arr_delay < 0 else '')
-
-        # Stil für das Trendsymbol festlegen
-        trend_style = {'color': 'green'} if trend_symbol == '⇧' else {'color': 'red'} if trend_symbol == '⇩' else {'color': 'gray'}
 
 
         # Balkendiagramm für die Häufigkeit der Top 10 Zielstaaten
@@ -212,14 +204,20 @@ def update_plots(start_date, end_date, selected_airlines):
                           title='Häufigkeit der Top 10 Zielstaaten',
                           labels={'x': 'Zielstaat', 'y': 'Häufigkeit'}, 
                           template='plotly_white', color_discrete_sequence=['red'])
-        bar2_fig.update_layout(plot_bgcolor='rgba(84, 83, 83, 0.62)', paper_bgcolor='rgba(48, 0, 38, 0.5)', font_color='#fff', xaxis_tickangle=35) 
+        bar2_fig.update_layout(plot_bgcolor='rgba(84, 83, 83, 0.62)', paper_bgcolor='rgba(48, 0, 38, 0.5)',
+                                font_color='#fff', xaxis_tickangle=45) 
 
         # Liniendiagramm für durchschnittliche Ankunftsverzögerung
         line_data = filtered_data.groupby('MonthShort')['ArrDelay'].mean().reset_index()
-        line_fig = px.line(line_data, x='MonthShort', y='ArrDelay', 
-                           title='Durchschnittliche Ankunftsverzögerung <br>    nach Monat', 
-                           labels={'MonthShort': 'Monat', 'ArrDelay': 'Durchschnittliche Ankunftsverzögerung (min)'},
-                           template='plotly_white', color_discrete_sequence=['yellow'])
+        line_data = filtered_data.groupby(['Year','Month','DayofMonth'])['ArrDelay'].mean().reset_index()
+        # Fügen Sie eine neue Spalte 'Year_Month' hinzu, die die Kombination aus Jahr und Monat enthält
+        line_data['Year_Month_day'] = line_data['Year'].astype(str) + '-' + line_data['Month'].astype(str).str.zfill(2)+ '-' + line_data['DayofMonth'].astype(str).str.zfill(2)
+        # Plot mit Plotly Express
+        line_fig = px.line(line_data, x='Year_Month_day', y='ArrDelay',
+                title=' Durchschnittliche Ankunftsverzögerung über die Zeit',
+                labels={'ArrDelay': ' Durchschnittliche Ankunftsverzögerung (min)', 'Year_Month_day': 'Jahr-Monat-Tag'},
+                template='plotly_white', color_discrete_sequence=['yellow'])
+
         line_fig.update_layout(xaxis_tickangle=35, plot_bgcolor='rgba(84, 83, 83, 0.62)', paper_bgcolor='rgba(48, 0, 38, 0.5)', font_color='#fff')
         
         # Streudiagramm für Entfernung vs. Abflugzeit
@@ -257,3 +255,4 @@ def update_plots(start_date, end_date, selected_airlines):
 # Run the application
 if __name__ == '__main__':
     app.run_server(debug=True)
+
